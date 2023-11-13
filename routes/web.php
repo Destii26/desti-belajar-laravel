@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PengaturanController;
+use App\Http\Controllers\productController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [PengaturanController::class, 'index']);
+
+//route product
+Route::get('/products', [productController::class, 'index']);
+Route::get('/products/tambah', [productController::class, 'tambah']);
+Route::post('/products/store',  [productController::class, 'store']);
+Route::get('/products/edit/{id}', [productController::class, 'edit']);
+Route::post('/products/update', [productController::class, 'update']);
+Route::get('/products/hapus/{id}', [productController::class, 'hapus']);
