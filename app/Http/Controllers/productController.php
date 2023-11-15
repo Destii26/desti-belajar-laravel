@@ -3,77 +3,138 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\ProductCategory;
+use App\Models\view_data;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-	public function index()
+	public function index(Request $request)
 	{
-		// mengambil data dari tabel products
-		$products = DB::table('products')->get();
+		$search = $request->input('search', '');
+		$limit = 6;
 
-		// mengirim data products ke view index
-		return view('pages.index', compact('products'));
+		$Product = Product::when($search, function ($query, $search) {
+			$query->where('product_name', 'like', "%$search%")
+				->orWhere('category_id', 'like', "%$search%")
+				->orWhere('description', 'like', "%$search%");
+		})
+			->simplepaginate($limit);
+
+		return view('products.index', compact('Product', 'search'));
 	}
 
-	// method untuk menampilkan view form tambah products
-	public function tambah()
+	public function delete($id)
 	{
-		// memanggil view tambah
-		return view('pages.tambah');
+		$id = (int)$id;
+
+		$deleted = DB::table('products')
+			->where('id', $id)
+			->delete();
+
+		if ($deleted) {
+			// Successful deletion
+			return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+		} else {
+			// Failed deletion
+			return redirect()->route('products.index')->with('error', 'Failed to delete product.');
+		}
 	}
 
-	// method untuk insert data ke tabel products
-	public function store(Request $request)
+	public function createForm()
 	{
-		// insert data ke tabel products
-		DB::table('products')->insert([
-			'products_name' => $request->input('nama'),
-			'products_category' => $request->input('category_id'),
-			'products_code' => $request->input('products_code'),
-			'products_description' => $request->input('description'),
-			'products_price' => $request->input('price'),
-			'products_stock' => $request->input('stock'),
+		$categories = ProductCategory::all();  // Mengambil semua kategori dari database
+
+		return view('products.create', compact('categories'));
+	}
+	public function create(Request $request)
+	{
+		// Validasi formulir
+		$request->validate([
+			'product_name' => 'required|string',
+			'category_id' => 'required|integer',
+			'product_code' => 'required|string',
+			'description' => 'required|string',
+			'price' => 'required|numeric',
+			'product_image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 		]);
 
-		// alihkan halaman ke halaman products
-		return redirect('/products');
-	}
-
-	// method untuk edit data products
-	public function edit($id)
-	{
-		// mengambil data products berdasarkan id yang dipilih
-		$products = DB::table('products')->where('products_id', $id)->get();
-
-		// passing data products yang didapat ke view edit.blade.php
-		return view('edit', compact('products'));
-	}
-
-	// update data products
-	public function update(Request $request)
-	{
-		// update data products
-		DB::table('products')->where('products_id', $request->input('id'))->update([
-			'products_name' => $request->input('nama'),
-			'products_category' => $request->input('category_id'),
-			'products_code' => $request->input('products_code'),
-			'products_description' => $request->input('description'),
-			'products_price' => $request->input('price'),
-			'products_stock' => $request->input('stock'),
+		// Proses data formulir
+		$data = $request->only([
+			'product_name',
+			'category_id',
+			'product_code',
+			'description',
+			'price',
 		]);
 
-		// alihkan halaman ke halaman products
-		return redirect('/products');
+		// Menangani upload gambar
+		$imagePaths = [];
+		if ($request->hasFile('product_image')) {
+			foreach ($request->file('product_image') as $image) {
+				$imagePath = $image->store('uploads', 'public');
+				$imagePaths[] = $imagePath;
+			}
+		}
+
+		// Menambahkan path gambar ke data sebagai string
+		$data['image'] = json_encode($imagePaths);
+
+		// Membuat produk menggunakan model Eloquent
+		Product::create($data);
+
+		return redirect()->route('products.index')->with('success', 'Produk berhasil dibuat.');
 	}
 
-	// method untuk hapus data products
-	public function hapus($id)
+	public function update(Request $request, $id)
 	{
-		// menghapus data products berdasarkan id yang dipilih
-		DB::table('products')->where('products_id', $id)->delete();
+		// Validasi formulir
+		$request->validate([
+			'product_name' => 'required|string',
+			'category_id' => 'required|integer',
+			'product_code' => 'required|string',
+			'description' => 'required|string',
+			'price' => 'required|numeric',
+			'product_image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+		]);
 
-		// alihkan halaman ke halaman products
-		return redirect('/products');
+		// Proses data formulir
+		$data = $request->only([
+			'product_name',
+			'category_id',
+			'product_code',
+			'description',
+			'price',
+		]);
+
+		// Menangani upload gambar
+		$imagePaths = [];
+		if ($request->hasFile('product_image')) {
+			foreach ($request->file('product_image') as $image) {
+				$imagePath = $image->store('uploads', 'public');
+				$imagePaths[] = $imagePath;
+			}
+		}
+
+		// Menambahkan path gambar ke data sebagai string
+		$data['image'] = json_encode($imagePaths);
+
+		// Mengupdate produk menggunakan model Eloquent
+		$product = Product::find($id);
+		$product->update($data);
+
+		return redirect()->route('products.index')->with('success', 'Produk berhasil diupdate.');
 	}
+
+	public function editForm($id)
+	{
+		$product = Product::find($id);
+		$categories = ProductCategory::all();
+
+		return view('products.edit', compact('product', 'categories'));
+	}
+
+	// Other methods (create, update, delete) can be implemented similarly
 }

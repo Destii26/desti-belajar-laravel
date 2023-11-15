@@ -17,10 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PengaturanController::class, 'index']);
 
-//route product
-Route::get('/products', [productController::class, 'index']);
-Route::get('products/tambah', [ProductController::class, 'tambah']);
-Route::post('/products/store',  [productController::class, 'store']);
-Route::get('/products/edit/{id}', [productController::class, 'edit']);
-Route::post('/products/update', [productController::class, 'update']);
-Route::get('/products/hapus/{id}', [productController::class, 'hapus']);
+
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::delete('/products/{id}', [ProductController::class, 'delete'])->name('products.delete');
+
+Route::get('/products/create', [ProductController::class, 'createForm'])->name('products.createForm');
+Route::post('/products/create', [ProductController::class, 'create'])->name('products.create');
+
+Route::get('/products/{product}/edit', [ProductController::class, 'editForm'])->name('products.edit');
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
