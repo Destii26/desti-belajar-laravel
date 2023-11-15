@@ -7,7 +7,7 @@
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Daftar Produk</h3>
-                        <a href="/product/tambah" class="btn btn-primary float-right">+ Tambah Produk Baru</a>
+                        <a href="/products/tambah" class="btn btn-primary float-right">+ Tambah Produk Baru</a>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

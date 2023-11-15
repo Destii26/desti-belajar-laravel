@@ -5,12 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-
-class productController extends Controller
+class ProductController extends Controller
 {
 	public function index()
 	{
-		// mengambil data dari table products
+		// mengambil data dari tabel products
 		$products = DB::table('products')->get();
 
 		// mengirim data products ke view index
@@ -20,23 +19,23 @@ class productController extends Controller
 	// method untuk menampilkan view form tambah products
 	public function tambah()
 	{
-
 		// memanggil view tambah
 		return view('pages.tambah');
 	}
 
-	// method untuk insert data ke table products
+	// method untuk insert data ke tabel products
 	public function store(Request $request)
 	{
-		// insert data ke table products
+		// insert data ke tabel products
 		DB::table('products')->insert([
-			'products_nama_products' => $request->nama,
-			'products_category' => $request->category_id,
-			'products_products_code' => $request->products_code,
-			'products_description' => $request->description,
-			'products_price' => $request->price,
-			'products_stock' => $request->stock,
+			'products_name' => $request->input('nama'),
+			'products_category' => $request->input('category_id'),
+			'products_code' => $request->input('products_code'),
+			'products_description' => $request->input('description'),
+			'products_price' => $request->input('price'),
+			'products_stock' => $request->input('stock'),
 		]);
+
 		// alihkan halaman ke halaman products
 		return redirect('/products');
 	}
@@ -46,22 +45,24 @@ class productController extends Controller
 	{
 		// mengambil data products berdasarkan id yang dipilih
 		$products = DB::table('products')->where('products_id', $id)->get();
+
 		// passing data products yang didapat ke view edit.blade.php
-		return view('edit', ['products' => $products]);
+		return view('edit', compact('products'));
 	}
 
 	// update data products
 	public function update(Request $request)
 	{
 		// update data products
-		DB::table('products')->where('products_id', $request->id)->update([
-			'products_nama_products' => $request->nama,
-			'products_category' => $request->category_id,
-			'products_products_code' => $request->products_code,
-			'products_description' => $request->description,
-			'products_price' => $request->price,
-			'products_stock' => $request->stock,
+		DB::table('products')->where('products_id', $request->input('id'))->update([
+			'products_name' => $request->input('nama'),
+			'products_category' => $request->input('category_id'),
+			'products_code' => $request->input('products_code'),
+			'products_description' => $request->input('description'),
+			'products_price' => $request->input('price'),
+			'products_stock' => $request->input('stock'),
 		]);
+
 		// alihkan halaman ke halaman products
 		return redirect('/products');
 	}

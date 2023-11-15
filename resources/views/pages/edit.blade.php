@@ -1,31 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>edit product</title>
-</head>
-<body>
- 
-	
-	<h3>Edit product</h3>
- 
-	<a href="/product"> Kembali</a>
-	
-	<br/>
-	<br/>
- 
-	@foreach($product as $p)
-	<form action="/product/update" method="post">
-		{{ csrf_field() }}
-		<input type="hidden" name="id" value="{{ $p->product_id }}"> <br/>
-		Nama product <input type="text" required="required" name="nama" value="{{ $p->product_nama }}"> <br/>
-		Category <input type="number" required="required" name="category" value="{{ $p->product_category }}"> <br/>
-		Product code <input type="number" required="required" name="product_code" value="{{ $p->product_code }}"> <br/>
-		Description <textarea required="required" name="description">{{ $p->product_description }}</textarea> <br/>
-        Price <input type="number" required="required" name="price" value="{{ $p->product_price }}"> <br/>
-        Stock <input type="number" required="required" name="stock" value="{{ $p->product_stock }}"> <br/>
-		<input type="submit" value="Simpan Data">
-	</form>
-	@endforeach
-		
-</body>
-</html>
+<!-- resources/views/pages/edit.blade.php -->
+
+@extends('layouts.main')
+
+@section('content')
+    <div class="container">
+        <h1>Edit Product</h1>
+
+        <form action="/products/{{ $product->id }}" method="post">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label for="nama">Nama</label>
+                <input type="text" name="nama" class="form-control" value="{{ $product->nama }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="kategori">Kategori</label>
+                <input type="text" name="kategori" class="form-control" value="{{ $product->kategori }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="kode_produk">Kode Produk</label>
+                <input type="text" name="kode_produk" class="form-control" value="{{ $product->kode_produk }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="deskripsi">Deskripsi</label>
+                <textarea name="deskripsi" class="form-control" required>{{ $product->deskripsi }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="harga">Harga</label>
+                <input type="number" name="harga" class="form-control" value="{{ $product->harga }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="stok">Stok</label>
+                <input type="number" name="stok" class="form-control" value="{{ $product->stok }}" required>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Update Product" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+@endsection

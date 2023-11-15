@@ -19,7 +19,7 @@ Route::get('/', [PengaturanController::class, 'index']);
 
 //route product
 Route::get('/products', [productController::class, 'index']);
-Route::get('/products/tambah', [productController::class, 'tambah']);
+Route::get('products/tambah', [ProductController::class, 'tambah']);
 Route::post('/products/store',  [productController::class, 'store']);
 Route::get('/products/edit/{id}', [productController::class, 'edit']);
 Route::post('/products/update', [productController::class, 'update']);
