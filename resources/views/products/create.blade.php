@@ -28,32 +28,50 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="product_name">Nama Produk</label>
-                            <input type="text" name="product_name" id="product_name" class="form-control" placeholder="Nama Produk" required>
+                            <input type="text" name="product_name" id="product_name" class="form-control @error('product_name') is-invalid @enderror" autofocus>
+                            @error('product_name')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="category_id">Kategori Produk:</label>
-                            <select name="category_id" id="category_id" class="form-control" required>
+                            <select name="category_id" id="category_id" class="form-control @error('category_id') is-invalid @enderror" required>
                                 <option disabled selected value>Pilih Kategori</option>
                                 @foreach($categories as $category)
                                     <option value="{{ $category['id'] }}">{{ $category['category_name'] }}</option>
                                 @endforeach
                             </select>
+                            @error('category_id')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="product_code">Kode Produk:</label>
-                            <input type="text" name="product_code" id="product_code" class="form-control" placeholder="Kode produk" required>
+                            <input type="text" name="product_code" id="product_code" class="form-control @error('product_code') is-invalid @enderror" placeholder="Kode produk" required>
+                            @error('product_code')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="description">Deskripsi:</label>
-                            <textarea name="description" id="description" class="form-control" placeholder="Deskripsi Produk" required></textarea>
+                            <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror" placeholder="Deskripsi Produk" required></textarea>
+                            @error('description')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="price">Harga:</label>
-                            <input type="number" name="price" id="price" class="form-control" placeholder="Harga" required>
+                            <input type="number" name="price" id="price" class="form-control @error('price') is-invalid @enderror" placeholder="Harga" required>
+                            @error('price')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="form-group">
                             <label for="product_image">Product Image</label>
-                            <input type="file" class="form-control-file" id="product_image" name="product_image[]" multiple>
+                            <input type="file" class="form-control-file @error('product_image') is-invalid @enderror" id="product_image" name="product_image[]" multiple>
+                            @error('product_image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -66,5 +84,4 @@
         </div>
     </div>
 </div>
-
 @endsection

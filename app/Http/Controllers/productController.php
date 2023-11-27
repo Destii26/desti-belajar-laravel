@@ -21,6 +21,7 @@ class ProductController extends Controller
 				->orWhere('category_id', 'like', "%$search%")
 				->orWhere('description', 'like', "%$search%");
 		})
+			->join('product_categories', 'products.category_id', '=', 'product_categories.id')
 			->simplepaginate($limit);
 
 		return view('products.index', compact('Product', 'search'));
@@ -130,11 +131,19 @@ class ProductController extends Controller
 
 	public function editForm($id)
 	{
-		$product = Product::find($id);
+		// Menggunakan operasi join untuk mengambil data produk dan kategorinya
+		$product = DB::table('products')
+			->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+			->select('products.*', 'product_categories.category_name')
+			->where('products.id', $id)
+			->first();
+
+		// Mengambil semua kategori produk
 		$categories = ProductCategory::all();
 
 		return view('products.edit', compact('product', 'categories'));
 	}
+
 
 	// Other methods (create, update, delete) can be implemented similarly
 }
