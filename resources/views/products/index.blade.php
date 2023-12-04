@@ -44,6 +44,7 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
+                                    <th>Gambar</th>
                                     <th>Nama produk</th>
                                     <th>Kategori Produk</th>
                                     <th>Kode produk</th>
@@ -56,6 +57,29 @@
                                 @forelse ($Product as $row)
                                 <tr>
                                     <td>{{ $loop->index + 1 }}</td>
+                                    
+                                    <td><?php
+                                    // Mengambil path gambar dari database
+                                    $imagePathFromDatabase = $row->image;
+                    
+
+                                    // Menghapus tanda "[" dan "]" dari string
+                                    $imagePathFromDatabase = trim($imagePathFromDatabase, '[]');
+                                    $imagePathFromDatabase = str_replace('"', '', $imagePathFromDatabase);
+
+
+                                    // Mecah string berdasarkan tanda "/" 
+                                    $explodedPaths = explode('/', $imagePathFromDatabase);
+
+                                    // Ambil bagian terakhir dari array hasil pecahan sebagai nama file gambar
+                                    $fileName = end($explodedPaths);
+    
+                                  
+                                    ?>
+                                        <img src="{{ asset('storage/uploads/'.$fileName) }}" alt="gambar" class="rounded" style="width: 150px;">
+
+                                      
+                                    </td>
                                     <td>{{ $row['product_name'] }}</td>
                                     <td>{{ $row['category_name'] }}</td>
                                     <td>{{ $row['product_code'] }}</td>
