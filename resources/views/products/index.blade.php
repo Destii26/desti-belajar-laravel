@@ -50,6 +50,7 @@
                                     <th>Kode produk</th>
                                     <th>deskripsi</th>
                                     <th>Harga</th>
+                                    <th>Stok</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -81,10 +82,11 @@
                                       
                                     </td>
                                     <td>{{ $row['product_name'] }}</td>
-                                    <td>{{ $row['category_name'] }}</td>
+                                    <td>{{ $row->category->category_name }}</td>
                                     <td>{{ $row['product_code'] }}</td>
                                     <td>{{ $row['description'] }}</td>
                                     <td>{{ $row['price'] }}</td>
+                                    <td>{{ $row['stock'] }}</td>
                                 
                                     <td>
                                         <a href="{{ route('products.edit', $row['id']) }}" class="btn btn-success">edit</a>

@@ -40,5 +40,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/products/{product}/edit', [ProductController::class, 'editForm'])->name('products.edit');
     Route::put('/products/{product}/edit', [ProductController::class, 'update'])->name('products.update');
+
+    Route::get('/products/chart', [ProductController::class, 'chart'])->name('products.chart');
 });
 require __DIR__ . '/auth.php';

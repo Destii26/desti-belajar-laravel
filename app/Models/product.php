@@ -13,8 +13,14 @@ class Product extends Model
         'product_name',
         'description',
         'price',
+        'stock',
         'category_id',
         'product_code',
         'image',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
 }

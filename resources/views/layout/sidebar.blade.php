@@ -36,9 +36,14 @@
         <!-- Add icons to the links using the .nav-icon class
              with font-awesome or any other icon font library -->
              <li class="nav-item menu-open">
-              <a href="{{ route('products.index') }}" class="nav-link active" data-toggle="tooltip" data-target="#indexPage">
+              <a href="{{ route('products.chart') }}" class="nav-link active" data-toggle="tooltip" data-target="#indexPage">
                 <p>
                   Dashboard
+                </p>
+              </a>
+              <a href="{{ route('products.index') }}" class="nav-link active" data-toggle="tooltip" data-target="#indexPage">
+                <p>
+                  Produk
                 </p>
               </a>
               <a href="{{ route('pages.admin') }}" class="nav-link active" data-toggle="tooltip" data-target="#adminpage">

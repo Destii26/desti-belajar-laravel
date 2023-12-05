@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\view_data;
@@ -21,8 +22,7 @@ class ProductController extends Controller
 				->orWhere('category_id', 'like', "%$search%")
 				->orWhere('description', 'like', "%$search%");
 		})
-			->join('product_categories', 'products.category_id', '=', 'product_categories.id')
-			->simplepaginate($limit);
+			->paginate($limit);
 
 		return view('products.index', compact('Product', 'search'));
 	}
@@ -59,6 +59,7 @@ class ProductController extends Controller
 			'product_code' => 'required|string',
 			'description' => 'required|string',
 			'price' => 'required|numeric',
+			'stock' => 'required|numeric',
 			'product_image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 		]);
 
@@ -69,6 +70,7 @@ class ProductController extends Controller
 			'product_code',
 			'description',
 			'price',
+			'stock',
 		]);
 
 		// Menangani upload gambar
@@ -98,6 +100,7 @@ class ProductController extends Controller
 			'product_code' => 'required|string',
 			'description' => 'required|string',
 			'price' => 'required|numeric',
+			'stock' => 'required|numeric',
 			'product_image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
 		]);
 
@@ -108,40 +111,73 @@ class ProductController extends Controller
 			'product_code',
 			'description',
 			'price',
+			'stock',
 		]);
 
-		// Menangani upload gambar
-		$imagePaths = [];
+		// Mengupdate produk menggunakan model Eloquent
+		$product = Product::find($id);
+
+		// Menangani upload gambar hanya jika ada file yang diunggah
 		if ($request->hasFile('product_image')) {
+			// Menghapus gambar lama sebelum menyimpan yang baru
+			$this->deleteProductImages($product);
+
+			// Menangani upload gambar baru
+			$imagePaths = [];
 			foreach ($request->file('product_image') as $image) {
 				$imagePath = $image->store('uploads', 'public');
 				$imagePaths[] = $imagePath;
 			}
+
+			// Menambahkan path gambar ke data sebagai string
+			$data['image'] = json_encode($imagePaths);
 		}
 
-		// Menambahkan path gambar ke data sebagai string
-		$data['image'] = json_encode($imagePaths);
-
-		// Mengupdate produk menggunakan model Eloquent
-		$product = Product::find($id);
+		// Update produk
 		$product->update($data);
 
 		return redirect()->route('products.index')->with('success', 'Produk berhasil diupdate.');
 	}
 
+	// Helper function to delete old product images
+	private function deleteProductImages($product)
+	{
+		// Hapus gambar lama
+		$oldImages = json_decode($product->image, true);
+		foreach ($oldImages as $oldImage) {
+			Storage::disk('public')->delete($oldImage);
+		}
+	}
+
 	public function editForm($id)
 	{
-		// Menggunakan operasi join untuk mengambil data produk dan kategorinya
 		$product = DB::table('products')
 			->join('product_categories', 'products.category_id', '=', 'product_categories.id')
 			->select('products.*', 'product_categories.category_name')
 			->where('products.id', $id)
 			->first();
 
+		// Pastikan produk dengan ID yang diminta ada
+		if (!$product) {
+			return redirect()->route('products.index')->with('error', 'Produk tidak ditemukan.');
+		}
+
 		// Mengambil semua kategori produk
 		$categories = ProductCategory::all();
 
 		return view('products.edit', compact('product', 'categories'));
+	}
+
+
+
+	public function chart()
+	{
+
+		$totalProducts = Product::count();
+		$totalCategories = ProductCategory::count();
+		$totalPrice = Product::sum('price');
+		$totalStock = Product::sum('stock');
+		return view('products.chart', compact('totalProducts', 'totalCategories', 'totalPrice', 'totalStock'));
 	}
 
 
