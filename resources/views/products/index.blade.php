@@ -25,7 +25,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
+                        @if($role == 'admin')
                         <a href="{{ route('products.create') }}" class="btn btn-primary" role="button" title="Tambah Data"><i class="glyphicon glyphicon-plus"></i> Tambah produk</a>
+                        @endif
                         <div class="float-right">
                             <form id="search" method="get" action="{{ url('products') }}">
                                 <div class="input-group">
@@ -51,7 +53,9 @@
                                     <th>deskripsi</th>
                                     <th>Harga</th>
                                     <th>Stok</th>
+                                    @if($role == 'admin')
                                     <th>Aksi</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -89,12 +93,14 @@
                                     <td>{{ $row['stock'] }}</td>
                                 
                                     <td>
+                                        @if($role == 'admin')
                                         <a href="{{ route('products.edit', $row['id']) }}" class="btn btn-success">edit</a>
                                         <form action="{{ route('products.delete', $row['id']) }}" method="post" style="display: inline;">
                                             @csrf
                                             @method('delete')
                                             <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">Hapus</button>
                                         </form>
+                                        @endif
                                     </td>
                                 </tr>
                                 @empty
